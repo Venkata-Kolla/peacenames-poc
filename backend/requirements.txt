@@ -1,0 +1,18 @@
+# PeaceNames POC - Python Dependencies
+# =====================================
+# Install with: pip install -r requirements.txt
+
+# Web framework
+Flask==3.0.0
+
+# CORS support (for frontend development)
+Flask-CORS==4.0.0
+
+# MySQL database connector
+mysql-connector-python==8.2.0
+
+# WSGI server for production
+gunicorn==21.2.0
+
+# Environment variable management (optional but useful)
+python-dotenv==1.0.0

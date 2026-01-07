@@ -1,0 +1,95 @@
+# ============================================================================
+# PEACENAMES POC - DOCKER COMPOSE
+# ============================================================================
+# This file sets up the complete development environment with one command:
+#   docker-compose up
+#
+# WHAT GETS CREATED:
+# 1. MySQL database (with schema auto-loaded)
+# 2. Flask backend (Python API server)
+# 3. Everything connected and ready to use
+#
+# FOR A TYPICAL SOFTWARE ENGINEER:
+# This is a standard Docker Compose setup. If you've used Docker before,
+# this should be familiar. If not, don't worry - the README has step-by-step
+# instructions.
+# ============================================================================
+
+version: '3.8'
+
+services:
+  # ============================================
+  # MySQL Database
+  # ============================================
+  # This runs MySQL 8.0 with the PeaceNames schema pre-loaded.
+  # Data persists in a Docker volume between restarts.
+  # ============================================
+  db:
+    image: mysql:8.0
+    container_name: peacenames-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: peacenames
+      MYSQL_DATABASE: peacenames
+      MYSQL_USER: peacenames
+      MYSQL_PASSWORD: peacenames
+    ports:
+      - "3306:3306"
+    volumes:
+      # Load schema on first run
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      # Persist data between restarts
+      - peacenames-db-data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppeacenames"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Flask Backend API
+  # ============================================
+  # This runs the Python Flask application that provides:
+  # - REST API for C-Grid navigation
+  # - File upload handling
+  # - Tag management
+  # - Serves the frontend
+  # ============================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: peacenames-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: peacenames
+      DB_PASSWORD: peacenames
+      DB_NAME: peacenames
+      FLASK_DEBUG: "True"
+      UPLOAD_FOLDER: /app/uploads
+    ports:
+      - "5001:5000"
+    volumes:
+      # Mount source code for live reload during development
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      # Persist uploaded files
+      - peacenames-uploads:/app/uploads
+    depends_on:
+      db:
+        condition: service_healthy
+    command: python backend/app.py
+
+# ============================================
+# Persistent Volumes
+# ============================================
+# These volumes ensure your data survives container restarts
+# ============================================
+volumes:
+  peacenames-db-data:
+    name: peacenames-db-data
+  peacenames-uploads:
+    name: peacenames-uploads
