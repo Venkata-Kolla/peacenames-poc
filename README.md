@@ -1,4 +1,4 @@
-# 🕊️ PeaceNames POC - C-Grid Archive Browser
+# PeaceNames POC - C-Grid Archive Browser
 
 ## What is This?
 
@@ -27,7 +27,7 @@ Now you can find `beach.jpg` by clicking ANY combination:
 
 ---
 
-## 🚀 Quick Start (5 minutes)
+## Quick Start (5 minutes)
 
 ### Prerequisites
 
@@ -80,7 +80,7 @@ You should see the PeaceNames C-Grid interface with:
 
 ---
 
-## 🛑 Stopping the Application
+## Stopping the Application
 
 Press `Ctrl+C` in the terminal, then run:
 
@@ -96,7 +96,7 @@ docker-compose down -v
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 peacenames-poc/
@@ -114,7 +114,7 @@ peacenames-poc/
 
 ---
 
-## 🔧 Development Mode
+## Development Mode
 
 ### Running Without Docker
 
@@ -153,7 +153,7 @@ Go to http://localhost:5000
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
 The backend provides these REST endpoints:
 
