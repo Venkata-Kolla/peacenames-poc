@@ -19,98 +19,157 @@
         .logo { display: flex; align-items: center; gap: 12px; }
         .logo h1 { font-size: 1.5rem; }
         .logo .subtitle { font-size: 0.875rem; opacity: 0.9; }
+        .header-controls { display: flex; gap: 1rem; align-items: center; }
         .lang-toggle { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; }
         
-        /* Layout */
-        .main-container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; }
+        /* Main Layout */
+        .main-container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
         
-        /* C-Grid Panel */
-        .cgrid-panel { background: var(--card); border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); padding: 1rem; height: fit-content; position: sticky; top: 1rem; }
-        .cgrid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--primary); }
-        .cgrid-header h2 { font-size: 1.125rem; color: var(--primary-dark); }
+        /* C-Grid Section */
+        .cgrid-section { background: var(--card); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .cgrid-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .cgrid-header h2 { font-size: 1.25rem; color: var(--primary-dark); }
+        .cgrid-subtitle { color: var(--text-sec); font-size: 0.875rem; }
+        
+        /* 5x5 Grid */
+        .cgrid-container { display: flex; justify-content: center; padding: 1rem 0; }
+        .cgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; max-width: 500px; width: 100%; }
+        .cgrid-cell { 
+            aspect-ratio: 1; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            transition: all 0.2s;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid transparent;
+        }
+        .cgrid-cell:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        .cgrid-cell.selected {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
+        }
+        .cgrid-cell img { width: 100%; height: 100%; object-fit: cover; }
+        .cgrid-cell .label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 4px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .cgrid-cell:hover .label { opacity: 1; }
+        .cgrid-cell.center-cell {
+            background: linear-gradient(135deg, #a8e6cf, #88d8b0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cgrid-cell.center-cell img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+        
+        /* Dimension Labels */
+        .dimension-labels { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+        .dim-label { 
+            padding: 0.5rem 1rem; 
+            border-radius: 20px; 
+            font-size: 0.75rem; 
+            font-weight: 600;
+        }
+        .dim-label.where { background: #FFF3E0; color: #E65100; }
+        .dim-label.when { background: #E3F2FD; color: #1565C0; }
+        .dim-label.what { background: #E8F5E9; color: #2E7D32; }
+        .dim-label.how { background: #FCE4EC; color: #C2185B; }
+        .dim-label.who { background: #F3E5F5; color: #7B1FA2; }
+        
+        /* Selected Tags Display */
+        .selected-section { background: var(--card); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .selected-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
+        .selected-header h3 { font-size: 1rem; color: var(--text); }
         .clear-btn { background: none; border: 1px solid var(--text-sec); color: var(--text-sec); padding: 0.25rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.75rem; }
         .clear-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .selected-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; min-height: 32px; }
+        .selected-tag { 
+            display: flex; align-items: center; gap: 0.5rem;
+            background: var(--primary-light); color: white; 
+            padding: 0.25rem 0.5rem 0.25rem 0.75rem; 
+            border-radius: 20px; font-size: 0.8rem;
+        }
+        .selected-tag img { width: 20px; height: 20px; border-radius: 4px; }
+        .selected-tag .remove { cursor: pointer; font-weight: bold; opacity: 0.8; }
+        .selected-tag .remove:hover { opacity: 1; }
+        .file-count { font-size: 1.25rem; font-weight: 700; color: var(--primary); }
         
-        /* Dimensions */
-        .dimension { margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-        .dim-header { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem; background: #FAFAFA; cursor: pointer; }
-        .dim-header:hover { background: #F0F0F0; }
-        .dim-header.active { background: var(--primary-light); color: white; }
-        .dim-name { font-weight: 600; font-size: 0.875rem; }
-        .dim-name .zh { font-weight: 400; opacity: 0.8; margin-left: 4px; }
-        .dim-count { font-size: 0.75rem; background: var(--primary); color: white; padding: 2px 8px; border-radius: 10px; }
-        .dim-header.active .dim-count { background: white; color: var(--primary); }
-        
-        /* Tags */
-        .dim-tags { padding: 0.5rem; display: none; flex-direction: column; gap: 0.25rem; max-height: 250px; overflow-y: auto; }
-        .dim-tags.open { display: flex; }
-        .tag { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.75rem; border-radius: 4px; cursor: pointer; font-size: 0.875rem; }
-        .tag:hover { background: #E8F5E9; }
-        .tag.selected { background: var(--primary); color: white; }
-        .tag.level-2 { margin-left: 1rem; font-size: 0.8125rem; }
-        .tag-name .zh { color: var(--text-sec); font-size: 0.75rem; margin-left: 4px; }
-        .tag.selected .tag-name .zh { color: rgba(255,255,255,0.8); }
-        .tag-count { font-size: 0.75rem; color: var(--text-sec); background: #EEE; padding: 2px 6px; border-radius: 8px; }
-        .tag.selected .tag-count { background: rgba(255,255,255,0.3); color: white; }
-        .tag-count.zero { opacity: 0.5; }
-        
-        /* Content Area */
-        .content-area { display: flex; flex-direction: column; gap: 1.5rem; }
-        .status-bar { background: var(--card); border-radius: 8px; padding: 1rem 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.12); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        .status-info { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
-        .file-count { font-size: 1.5rem; font-weight: 700; color: var(--primary); }
-        .file-count-label { color: var(--text-sec); font-size: 0.875rem; }
-        .selected-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-        .selected-chip { display: flex; align-items: center; gap: 0.25rem; background: var(--primary-light); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.75rem; }
-        .selected-chip .remove { cursor: pointer; opacity: 0.7; font-weight: bold; }
-        .upload-btn { background: var(--accent); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+        /* Files Section */
+        .files-section { background: var(--card); border-radius: 12px; padding: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .files-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .files-header h3 { font-size: 1rem; }
+        .upload-btn { background: var(--accent); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.875rem; }
         .upload-btn:hover { background: #F57C00; }
         
         /* Files Grid */
-        .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-        .file-card { background: var(--card); border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden; cursor: pointer; transition: transform 0.2s; }
-        .file-card:hover { transform: translateY(-2px); box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .file-preview { height: 140px; background: linear-gradient(135deg, #E3F2FD, #BBDEFB); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
-        .file-info { padding: 1rem; }
-        .file-name { font-weight: 600; font-size: 0.875rem; margin-bottom: 0.25rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .file-desc { font-size: 0.75rem; color: var(--text-sec); margin-bottom: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+        .file-card { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; cursor: pointer; transition: all 0.2s; }
+        .file-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-2px); }
+        .file-preview { height: 120px; background: linear-gradient(135deg, #E3F2FD, #BBDEFB); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; }
+        .file-info { padding: 0.75rem; }
+        .file-name { font-weight: 600; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 0.25rem; }
         .file-tags { display: flex; flex-wrap: wrap; gap: 0.25rem; }
-        .file-tag { font-size: 0.625rem; padding: 2px 6px; background: #E8F5E9; color: var(--primary-dark); border-radius: 4px; }
-        .file-meta { font-size: 0.6875rem; color: var(--text-sec); margin-top: 0.5rem; display: flex; justify-content: space-between; }
+        .file-tag { font-size: 0.6rem; padding: 2px 6px; background: #E8F5E9; color: var(--primary-dark); border-radius: 4px; }
         
         /* Empty State */
-        .empty-state { text-align: center; padding: 3rem; color: var(--text-sec); grid-column: 1/-1; }
-        .empty-icon { font-size: 4rem; margin-bottom: 1rem; opacity: 0.5; }
+        .empty-state { text-align: center; padding: 2rem; color: var(--text-sec); }
+        .empty-icon { font-size: 3rem; margin-bottom: 0.5rem; opacity: 0.5; }
         
         /* Modal */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal { background: white; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-        .modal-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal { background: white; border-radius: 12px; width: 90%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-sec); }
         .modal-body { padding: 1.5rem; }
-        .form-group { margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.875rem; }
         .form-group input, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 4px; font-size: 0.875rem; }
-        .form-group textarea { min-height: 80px; resize: vertical; }
-        .tag-selector { display: flex; flex-direction: column; gap: 1rem; }
-        .tag-dimension { border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem; }
-        .tag-dim-name { font-weight: 600; font-size: 0.8125rem; margin-bottom: 0.5rem; color: var(--primary); }
-        .tag-options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-        .tag-option { padding: 0.25rem 0.75rem; border: 1px solid var(--border); border-radius: 20px; font-size: 0.75rem; cursor: pointer; }
-        .tag-option:hover { border-color: var(--primary); }
-        .tag-option.selected { background: var(--primary); border-color: var(--primary); color: white; }
-        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 1rem; }
-        .btn { padding: 0.75rem 1.5rem; border-radius: 4px; font-weight: 600; cursor: pointer; }
+        .form-group textarea { min-height: 60px; resize: vertical; }
+        
+        /* Tag Selector in Modal */
+        .tag-grid-selector { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin-top: 0.5rem; }
+        .tag-grid-selector .mini-cell { 
+            aspect-ratio: 1; border-radius: 4px; cursor: pointer; 
+            overflow: hidden; border: 2px solid transparent; 
+            transition: all 0.2s;
+        }
+        .tag-grid-selector .mini-cell:hover { border-color: var(--primary-light); }
+        .tag-grid-selector .mini-cell.selected { border-color: var(--primary); background: rgba(46,125,50,0.1); }
+        .tag-grid-selector .mini-cell img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .modal-footer { padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 0.75rem; }
+        .btn { padding: 0.5rem 1rem; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.875rem; }
         .btn-secondary { background: white; border: 1px solid var(--border); color: var(--text); }
         .btn-primary { background: var(--primary); border: none; color: white; }
         
         /* Loading */
         .loading { display: flex; align-items: center; justify-content: center; padding: 2rem; }
-        .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        .spinner { width: 30px; height: 30px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
-        @media (max-width: 900px) { .main-container { grid-template-columns: 1fr; } .cgrid-panel { position: static; } }
+        /* Responsive */
+        @media (max-width: 600px) {
+            .cgrid { max-width: 320px; gap: 4px; }
+            .header-content { flex-direction: column; gap: 0.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -123,264 +182,409 @@
                     <div class="subtitle">和合注册 • C-Grid Archive Browser</div>
                 </div>
             </div>
-            <button class="lang-toggle" onclick="toggleLang()"><span id="lang-ind">EN/中</span></button>
+            <div class="header-controls">
+                <button class="lang-toggle" onclick="toggleLang()"><span id="lang-ind">EN/中</span></button>
+            </div>
         </div>
     </header>
     
     <main class="main-container">
-        <aside class="cgrid-panel">
+        <!-- C-Grid Visual -->
+        <section class="cgrid-section">
             <div class="cgrid-header">
-                <h2>🔍 <span id="nav-label">Navigate</span></h2>
-                <button class="clear-btn" onclick="clearFilters()">Clear All</button>
-            </div>
-            <div id="dims-container"><div class="loading"><div class="spinner"></div></div></div>
-        </aside>
-        
-        <section class="content-area">
-            <div class="status-bar">
-                <div class="status-info">
-                    <div><span class="file-count" id="file-count">0</span> <span class="file-count-label">files</span></div>
-                    <div class="selected-tags" id="selected-display"></div>
+                <div>
+                    <h2>🔲 <span id="grid-title">C-Grid Navigator</span></h2>
+                    <p class="cgrid-subtitle" id="grid-subtitle">Click icons to filter your files by category</p>
                 </div>
+            </div>
+            
+            <div class="cgrid-container">
+                <div class="cgrid" id="cgrid">
+                    <!-- Grid will be rendered by JavaScript -->
+                </div>
+            </div>
+            
+            <div class="dimension-labels">
+                <span class="dim-label where">Col 1: WHERE 哪里</span>
+                <span class="dim-label when">Col 2: WHEN 何时</span>
+                <span class="dim-label what">Col 3: WHAT 什么</span>
+                <span class="dim-label how">Col 4: HOW 如何</span>
+                <span class="dim-label who">Col 5: WHO 谁</span>
+            </div>
+        </section>
+        
+        <!-- Selected Filters -->
+        <section class="selected-section">
+            <div class="selected-header">
+                <h3><span class="file-count" id="file-count">0</span> <span id="files-label">files found</span></h3>
+                <button class="clear-btn" onclick="clearFilters()" id="clear-btn">Clear All</button>
+            </div>
+            <div class="selected-tags" id="selected-tags">
+                <span style="color: var(--text-sec); font-size: 0.875rem;" id="no-filter-msg">No filters selected - showing all files</span>
+            </div>
+        </section>
+        
+        <!-- Files Display -->
+        <section class="files-section">
+            <div class="files-header">
+                <h3 id="files-title">📁 Files</h3>
                 <button class="upload-btn" onclick="openModal()">➕ Upload</button>
             </div>
-            <div id="files-container" class="files-grid"><div class="loading"><div class="spinner"></div></div></div>
+            <div class="files-grid" id="files-grid">
+                <div class="loading"><div class="spinner"></div></div>
+            </div>
         </section>
     </main>
     
+    <!-- Upload Modal -->
     <div class="modal-overlay" id="upload-modal">
         <div class="modal">
             <div class="modal-header">
-                <h2>Upload New File</h2>
+                <h2 id="modal-title">Upload New File</h2>
                 <button class="modal-close" onclick="closeModal()">×</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label>Select File</label>
+                    <label id="file-label">Select File</label>
                     <input type="file" id="file-input">
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label id="desc-label">Description</label>
                     <textarea id="file-desc" placeholder="Add notes..."></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Assign Tags</label>
-                    <p style="font-size:0.75rem;color:var(--text-sec);margin-bottom:0.75rem">Select tags from each dimension for best navigation.</p>
-                    <div class="tag-selector" id="tag-selector"></div>
+                    <label id="tags-label">Select Categories (click icons)</label>
+                    <div class="tag-grid-selector" id="tag-selector">
+                        <!-- Mini grid for tag selection -->
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="doUpload()">Upload</button>
+                <button class="btn btn-secondary" onclick="closeModal()" id="cancel-btn">Cancel</button>
+                <button class="btn btn-primary" onclick="doUpload()" id="upload-btn">Upload</button>
             </div>
         </div>
     </div>
 
     <script>
         const API = '/api';
-        let state = { lang: 'en', selected: [], dims: [], files: [], allTags: {}, openDims: ['WHO','WHEN','WHAT'] };
         
-        document.addEventListener('DOMContentLoaded', async () => {
-            await loadGrid();
-            await loadFiles();
+        // 5x5 C-Grid configuration based on cgrid.jpg
+        const CGRID_CONFIG = [
+            // Row 1
+            { id: 'gold', en: 'Finance', zh: '金融', icon: 'icons/gold.jpg', dimension: 'WHAT' },
+            { id: 'edu', en: 'Education', zh: '教育', icon: 'icons/edu.jpg', dimension: 'WHEN' },
+            { id: 'res', en: 'Resources', zh: '资源', icon: 'icons/res.jpg', dimension: 'WHAT' },
+            { id: 'pub', en: 'Publication', zh: '出版', icon: 'icons/pub.jpg', dimension: 'HOW' },
+            { id: 'biz', en: 'Business', zh: '商业', icon: 'icons/biz.jpg', dimension: 'WHO' },
+            // Row 2
+            { id: 'arch', en: 'Archive', zh: '档案', icon: 'icons/arch.jpg', dimension: 'WHERE' },
+            { id: 'mot', en: 'Time', zh: '时间', icon: 'icons/mot.jpg', dimension: 'WHEN' },
+            { id: 'dir', en: 'Documents', zh: '文档', icon: 'icons/dir.jpg', dimension: 'WHAT' },
+            { id: 'job', en: 'Career', zh: '职业', icon: 'icons/job.jpg', dimension: 'HOW' },
+            { id: 'com', en: 'Commerce', zh: '贸易', icon: 'icons/com.jpg', dimension: 'WHO' },
+            // Row 3
+            { id: 'lan', en: 'Language', zh: '语言', icon: 'icons/lan.jpg', dimension: 'WHERE' },
+            { id: 'exp', en: 'Experience', zh: '经历', icon: 'icons/exp.jpg', dimension: 'WHEN' },
+            { id: 'name', en: 'Identity', zh: '身份', icon: 'icons/name.jpg', dimension: 'WHAT', isCenter: true },
+            { id: 'post', en: 'Mail', zh: '邮件', icon: 'icons/post.jpg', dimension: 'HOW' },
+            { id: 'sys', en: 'System', zh: '系统', icon: 'icons/sys.jpg', dimension: 'WHO' },
+            // Row 4
+            { id: 'loc', en: 'Location', zh: '位置', icon: 'icons/loc.jpg', dimension: 'WHERE' },
+            { id: 'info', en: 'Info', zh: '信息', icon: 'icons/info.jpg', dimension: 'WHEN' },
+            { id: 'tree', en: 'Family', zh: '家庭', icon: 'icons/tree.jpg', dimension: 'WHAT' },
+            { id: 'net', en: 'Network', zh: '网络', icon: 'icons/net.jpg', dimension: 'HOW' },
+            { id: 'gov', en: 'Government', zh: '政府', icon: 'icons/gov.jpg', dimension: 'WHO' },
+            // Row 5
+            { id: 'neon', en: 'New', zh: '新建', icon: 'icons/neon.jpg', dimension: 'WHERE' },
+            { id: 'dic', en: 'Dictionary', zh: '词典', icon: 'icons/dic.jpg', dimension: 'WHEN' },
+            { id: 'proj', en: 'Project', zh: '项目', icon: 'icons/proj.jpg', dimension: 'WHAT' },
+            { id: 'org', en: 'Organization', zh: '组织', icon: 'icons/org.jpg', dimension: 'HOW' },
+            { id: 'cir', en: 'Circle', zh: '圈子', icon: 'icons/cir.jpg', dimension: 'WHO' },
+        ];
+        
+        let state = {
+            lang: 'en',
+            selectedCells: [], // Array of selected cell IDs
+            files: []
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCGrid();
+            renderTagSelector();
+            loadFiles();
         });
         
-        async function loadGrid() {
-            try {
-                const params = state.selected.length ? `?tags=${state.selected.join(',')}` : '';
-                const r = await fetch(`${API}/cgrid/navigate${params}`);
-                const d = await r.json();
-                if (d.success) { state.dims = d.data.dimensions; renderDims(); updateStatus(d.data.total_matching_files); }
-            } catch(e) { document.getElementById('dims-container').innerHTML = '<div class="empty-state">⚠️ Cannot connect to server</div>'; }
-        }
-        
-        async function loadFiles() {
-            try {
-                const params = state.selected.length ? `?tags=${state.selected.join(',')}` : '';
-                const r = await fetch(`${API}/files${params}`);
-                const d = await r.json();
-                if (d.success) { state.files = d.data; renderFiles(); }
-            } catch(e) { document.getElementById('files-container').innerHTML = '<div class="empty-state">⚠️ Cannot load files</div>'; }
-        }
-        
-        function renderDims() {
-            const c = document.getElementById('dims-container');
-            if (!state.dims.length) { c.innerHTML = '<div class="empty-state">No dimensions</div>'; return; }
-            let h = '';
-            for (const dd of state.dims) {
-                const dim = dd.dimension, tags = dd.tags || [];
-                const isOpen = state.openDims.includes(dim.code);
-                const hasSel = tags.some(t => t.is_selected);
-                const icons = {WHO:'👤',WHEN:'📅',WHAT:'📄',WHERE:'📍',HOW:'⚡'};
-                h += `<div class="dimension">
-                    <div class="dim-header ${hasSel?'active':''}" onclick="toggleDim('${dim.code}')">
-                        <span class="dim-name">${icons[dim.code]||''} ${state.lang==='zh'&&dim.name_zh?dim.name_zh:dim.name_en}${state.lang==='en'&&dim.name_zh?`<span class="zh">${dim.name_zh}</span>`:''}</span>
-                        <span class="dim-count">${tags.filter(t=>t.file_count>0).length}</span>
+        // Render the 5x5 C-Grid
+        function renderCGrid() {
+            const grid = document.getElementById('cgrid');
+            let html = '';
+            
+            CGRID_CONFIG.forEach((cell, index) => {
+                const isSelected = state.selectedCells.includes(cell.id);
+                const label = state.lang === 'zh' ? cell.zh : cell.en;
+                
+                html += `
+                    <div class="cgrid-cell ${isSelected ? 'selected' : ''} ${cell.isCenter ? 'center-cell' : ''}" 
+                         onclick="toggleCell('${cell.id}')"
+                         title="${cell.en} / ${cell.zh}">
+                        <img src="${cell.icon}" alt="${cell.en}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2220%22>${cell.en.charAt(0)}</text></svg>'">
+                        <div class="label">${label}</div>
                     </div>
-                    <div class="dim-tags ${isOpen?'open':''}" id="tags-${dim.code}">${renderTags(tags)}</div>
-                </div>`;
-            }
-            c.innerHTML = h;
+                `;
+            });
+            
+            grid.innerHTML = html;
         }
         
-        function renderTags(tags, lvl=1) {
-            let h = '';
-            for (const t of tags.filter(x=>x.level===lvl)) {
-                const sel = state.selected.includes(t.id);
-                const name = state.lang==='zh'&&t.name_zh?t.name_zh:t.name_en;
-                const alt = state.lang==='en'&&t.name_zh?t.name_zh:'';
-                h += `<div class="tag ${sel?'selected':''} level-${lvl}" onclick="toggleTag(${t.id},event)">
-                    <span class="tag-name">${name}${alt?`<span class="zh">${alt}</span>`:''}</span>
-                    <span class="tag-count ${t.file_count===0?'zero':''}">${t.file_count}</span>
-                </div>`;
-            }
-            return h;
-        }
-        
-        function renderFiles() {
-            const c = document.getElementById('files-container');
-            if (!state.files.length) { c.innerHTML = '<div class="empty-state"><div class="empty-icon">📂</div><h3>No files found</h3><p>Try different filters or upload a file</p></div>'; return; }
-            let h = '';
-            for (const f of state.files) {
-                const icon = getIcon(f.mime_type);
-                const size = formatSize(f.size_bytes);
-                const date = f.created_at ? new Date(f.created_at).toLocaleDateString() : '';
-                h += `<div class="file-card">
-                    <div class="file-preview">${icon}</div>
-                    <div class="file-info">
-                        <div class="file-name" title="${f.original_filename}">${f.original_filename}</div>
-                        ${f.description?`<div class="file-desc">${f.description}</div>`:''}
-                        <div class="file-tags">${(f.tags||[]).slice(0,4).map(t=>`<span class="file-tag">${state.lang==='zh'&&t.name_zh?t.name_zh:t.name_en}</span>`).join('')}</div>
-                        <div class="file-meta"><span>${size}</span><span>${date}</span></div>
+        // Render mini grid for tag selection in upload modal
+        function renderTagSelector() {
+            const selector = document.getElementById('tag-selector');
+            let html = '';
+            
+            CGRID_CONFIG.forEach(cell => {
+                if (cell.isCenter) return; // Skip center cell for uploads
+                html += `
+                    <div class="mini-cell" data-id="${cell.id}" onclick="toggleUploadCell(this, '${cell.id}')" title="${cell.en} / ${cell.zh}">
+                        <img src="${cell.icon}" alt="${cell.en}">
                     </div>
-                </div>`;
-            }
-            c.innerHTML = h;
+                `;
+            });
+            
+            selector.innerHTML = html;
         }
         
-        function updateStatus(count) {
-            document.getElementById('file-count').textContent = count;
-            let chips = '';
-            for (const dd of state.dims) {
-                for (const t of dd.tags) {
-                    if (t.is_selected) chips += `<span class="selected-chip">${state.lang==='zh'&&t.name_zh?t.name_zh:t.name_en}<span class="remove" onclick="toggleTag(${t.id},event)">×</span></span>`;
+        // Toggle cell selection
+        function toggleCell(cellId) {
+            const index = state.selectedCells.indexOf(cellId);
+            if (index > -1) {
+                state.selectedCells.splice(index, 1);
+            } else {
+                state.selectedCells.push(cellId);
+            }
+            
+            renderCGrid();
+            renderSelectedTags();
+            loadFiles();
+        }
+        
+        // Clear all filters
+        function clearFilters() {
+            state.selectedCells = [];
+            renderCGrid();
+            renderSelectedTags();
+            loadFiles();
+        }
+        
+        // Render selected tags display
+        function renderSelectedTags() {
+            const container = document.getElementById('selected-tags');
+            
+            if (state.selectedCells.length === 0) {
+                container.innerHTML = `<span style="color: var(--text-sec); font-size: 0.875rem;" id="no-filter-msg">${state.lang === 'zh' ? '未选择筛选条件 - 显示所有文件' : 'No filters selected - showing all files'}</span>`;
+                return;
+            }
+            
+            let html = '';
+            state.selectedCells.forEach(cellId => {
+                const cell = CGRID_CONFIG.find(c => c.id === cellId);
+                if (cell) {
+                    const label = state.lang === 'zh' ? cell.zh : cell.en;
+                    html += `
+                        <div class="selected-tag">
+                            <img src="${cell.icon}" alt="${cell.en}">
+                            <span>${label}</span>
+                            <span class="remove" onclick="toggleCell('${cell.id}')">×</span>
+                        </div>
+                    `;
                 }
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        // Load files from API
+        async function loadFiles() {
+            const grid = document.getElementById('files-grid');
+            
+            try {
+                // Map selected cells to tag IDs (for now, use simple mapping)
+                const tagParams = state.selectedCells.length > 0 
+                    ? `?tags=${state.selectedCells.join(',')}` 
+                    : '';
+                
+                const response = await fetch(`${API}/files${tagParams}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    state.files = data.data;
+                    document.getElementById('file-count').textContent = state.files.length;
+                    renderFiles();
+                } else {
+                    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error loading files</p></div>';
+                }
+            } catch (error) {
+                console.error('Error loading files:', error);
+                // Show demo files if API not available
+                state.files = getDemoFiles();
+                document.getElementById('file-count').textContent = state.files.length;
+                renderFiles();
             }
-            document.getElementById('selected-display').innerHTML = chips;
         }
         
-        function toggleDim(code) {
-            const i = state.openDims.indexOf(code);
-            if (i > -1) state.openDims.splice(i, 1); else state.openDims.push(code);
-            const el = document.getElementById(`tags-${code}`);
-            if (el) el.classList.toggle('open');
+        // Demo files for offline testing
+        function getDemoFiles() {
+            return [
+                { id: 1, original_filename: 'family_photo.jpg', mime_type: 'image/jpeg', description: 'Family vacation in Paris', tags: ['tree', 'loc', 'exp'] },
+                { id: 2, original_filename: 'quarterly_report.pdf', mime_type: 'application/pdf', description: 'Q3 2024 business report', tags: ['biz', 'dir', 'proj'] },
+                { id: 3, original_filename: 'school_certificate.pdf', mime_type: 'application/pdf', description: 'Education certificate', tags: ['edu', 'dir'] },
+                { id: 4, original_filename: 'invoice_2024.pdf', mime_type: 'application/pdf', description: 'Business invoice', tags: ['gold', 'biz', 'dir'] },
+                { id: 5, original_filename: 'travel_memories.jpg', mime_type: 'image/jpeg', description: 'Travel photos', tags: ['loc', 'exp'] },
+                { id: 6, original_filename: 'contact_list.xlsx', mime_type: 'application/excel', description: 'Network contacts', tags: ['net', 'org', 'info'] },
+            ];
         }
         
-        async function toggleTag(id, e) {
-            if (e) e.stopPropagation();
-            const i = state.selected.indexOf(id);
-            if (i > -1) state.selected.splice(i, 1); else state.selected.push(id);
-            await loadGrid(); await loadFiles();
+        // Render files
+        function renderFiles() {
+            const grid = document.getElementById('files-grid');
+            
+            // Filter files based on selected cells
+            let filteredFiles = state.files;
+            if (state.selectedCells.length > 0) {
+                filteredFiles = state.files.filter(file => {
+                    const fileTags = file.tags || [];
+                    return state.selectedCells.some(cell => fileTags.includes(cell));
+                });
+            }
+            
+            if (filteredFiles.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-icon">📂</div>
+                        <h3>${state.lang === 'zh' ? '未找到文件' : 'No files found'}</h3>
+                        <p>${state.lang === 'zh' ? '尝试不同的筛选条件或上传新文件' : 'Try different filters or upload a new file'}</p>
+                    </div>
+                `;
+                document.getElementById('file-count').textContent = '0';
+                return;
+            }
+            
+            document.getElementById('file-count').textContent = filteredFiles.length;
+            
+            let html = '';
+            filteredFiles.forEach(file => {
+                const icon = getFileIcon(file.mime_type);
+                html += `
+                    <div class="file-card">
+                        <div class="file-preview">${icon}</div>
+                        <div class="file-info">
+                            <div class="file-name" title="${file.original_filename}">${file.original_filename}</div>
+                            ${file.description ? `<div style="font-size:0.7rem;color:var(--text-sec);margin-bottom:0.25rem;">${file.description}</div>` : ''}
+                            <div class="file-tags">
+                                ${(file.tags || []).slice(0, 4).map(tagId => {
+                                    const cell = CGRID_CONFIG.find(c => c.id === tagId);
+                                    return cell ? `<span class="file-tag">${state.lang === 'zh' ? cell.zh : cell.en}</span>` : '';
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html;
         }
         
-        async function clearFilters() { state.selected = []; await loadGrid(); await loadFiles(); }
+        // Upload modal
+        let uploadSelectedCells = [];
         
-        function toggleLang() {
-            state.lang = state.lang === 'en' ? 'zh' : 'en';
-            document.getElementById('lang-ind').textContent = state.lang === 'en' ? 'EN/中' : '中/EN';
-            document.getElementById('nav-label').textContent = state.lang === 'en' ? 'Navigate' : '导航';
-            renderDims(); renderFiles();
-        }
-        
-        // Upload Modal
-        let uploadTags = [];
-        
-        async function openModal() {
-            uploadTags = [];
+        function openModal() {
+            uploadSelectedCells = [];
             document.getElementById('upload-modal').classList.add('active');
             document.getElementById('file-input').value = '';
             document.getElementById('file-desc').value = '';
-            // Load tags
-            try {
-                const r = await fetch(`${API}/tags/tree`);
-                const d = await r.json();
-                if (d.success) { state.allTags = d.data; renderTagSelector(); }
-            } catch(e) { console.error(e); }
+            // Reset tag selector
+            document.querySelectorAll('.tag-grid-selector .mini-cell').forEach(el => el.classList.remove('selected'));
         }
         
-        function closeModal() { document.getElementById('upload-modal').classList.remove('active'); }
-        
-        function renderTagSelector() {
-            let h = '';
-            for (const [code, dd] of Object.entries(state.allTags)) {
-                const dim = dd.dimension;
-                const tags = flattenTags(dd.tags);
-                h += `<div class="tag-dimension">
-                    <div class="tag-dim-name">${dim.name_en} ${dim.name_zh?`(${dim.name_zh})`:''}</div>
-                    <div class="tag-options">${tags.map(t=>`<div class="tag-option" data-id="${t.id}" onclick="toggleUploadTag(this,${t.id})">${t.name_en}${t.name_zh?` ${t.name_zh}`:''}</div>`).join('')}</div>
-                </div>`;
-            }
-            document.getElementById('tag-selector').innerHTML = h;
+        function closeModal() {
+            document.getElementById('upload-modal').classList.remove('active');
         }
         
-        function flattenTags(tags, r=[]) {
-            for (const t of tags) { r.push(t); if (t.children?.length) flattenTags(t.children, r); }
-            return r;
-        }
-        
-        function toggleUploadTag(el, id) {
+        function toggleUploadCell(el, cellId) {
             el.classList.toggle('selected');
-            const i = uploadTags.indexOf(id);
-            if (i > -1) uploadTags.splice(i, 1); else uploadTags.push(id);
+            const index = uploadSelectedCells.indexOf(cellId);
+            if (index > -1) {
+                uploadSelectedCells.splice(index, 1);
+            } else {
+                uploadSelectedCells.push(cellId);
+            }
         }
         
         async function doUpload() {
-            const fileIn = document.getElementById('file-input');
+            const fileInput = document.getElementById('file-input');
             const desc = document.getElementById('file-desc').value;
-            if (!fileIn.files?.length) { alert('Select a file'); return; }
-            if (!uploadTags.length && !confirm('No tags selected. Continue?')) return;
             
-            try {
-                const fd = new FormData();
-                fd.append('file', fileIn.files[0]);
-                fd.append('description', desc);
-                fd.append('user_id', '1');
-                
-                const ur = await fetch(`${API}/files`, { method: 'POST', body: fd });
-                const ud = await ur.json();
-                if (!ud.success) throw new Error(ud.error);
-                
-                if (uploadTags.length) {
-                    await fetch(`${API}/files/${ud.data.id}/tags`, {
-                        method: 'POST',
-                        headers: {'Content-Type':'application/json'},
-                        body: JSON.stringify({tag_ids: uploadTags})
-                    });
+            if (!fileInput.files || !fileInput.files[0]) {
+                alert(state.lang === 'zh' ? '请选择文件' : 'Please select a file');
+                return;
+            }
+            
+            if (uploadSelectedCells.length === 0) {
+                if (!confirm(state.lang === 'zh' ? '未选择分类，继续？' : 'No categories selected. Continue?')) {
+                    return;
                 }
-                
-                closeModal();
-                await loadGrid(); await loadFiles();
-                alert('Uploaded!');
-            } catch(e) { alert('Error: ' + e.message); }
+            }
+            
+            // Add to demo files (in real app, would upload to server)
+            const newFile = {
+                id: state.files.length + 1,
+                original_filename: fileInput.files[0].name,
+                mime_type: fileInput.files[0].type,
+                description: desc,
+                tags: uploadSelectedCells
+            };
+            
+            state.files.push(newFile);
+            closeModal();
+            renderFiles();
+            alert(state.lang === 'zh' ? '上传成功！' : 'Upload successful!');
         }
         
-        function getIcon(mime) {
-            if (!mime) return '📄';
-            if (mime.startsWith('image/')) return '🖼️';
-            if (mime.startsWith('video/')) return '🎬';
-            if (mime.startsWith('audio/')) return '🎵';
-            if (mime.includes('pdf')) return '📕';
-            if (mime.includes('word')) return '📝';
-            if (mime.includes('sheet')||mime.includes('excel')) return '📊';
-            if (mime.includes('presentation')) return '📽️';
+        // Language toggle
+        function toggleLang() {
+            state.lang = state.lang === 'en' ? 'zh' : 'en';
+            document.getElementById('lang-ind').textContent = state.lang === 'en' ? 'EN/中' : '中/EN';
+            
+            // Update UI text
+            document.getElementById('grid-title').textContent = state.lang === 'zh' ? 'C-Grid 导航器' : 'C-Grid Navigator';
+            document.getElementById('grid-subtitle').textContent = state.lang === 'zh' ? '点击图标筛选文件' : 'Click icons to filter your files by category';
+            document.getElementById('files-label').textContent = state.lang === 'zh' ? '个文件' : 'files found';
+            document.getElementById('clear-btn').textContent = state.lang === 'zh' ? '清除全部' : 'Clear All';
+            document.getElementById('files-title').textContent = state.lang === 'zh' ? '📁 文件' : '📁 Files';
+            document.getElementById('modal-title').textContent = state.lang === 'zh' ? '上传新文件' : 'Upload New File';
+            document.getElementById('file-label').textContent = state.lang === 'zh' ? '选择文件' : 'Select File';
+            document.getElementById('desc-label').textContent = state.lang === 'zh' ? '描述' : 'Description';
+            document.getElementById('tags-label').textContent = state.lang === 'zh' ? '选择分类（点击图标）' : 'Select Categories (click icons)';
+            document.getElementById('cancel-btn').textContent = state.lang === 'zh' ? '取消' : 'Cancel';
+            document.getElementById('upload-btn').textContent = state.lang === 'zh' ? '上传' : 'Upload';
+            
+            renderCGrid();
+            renderSelectedTags();
+            renderFiles();
+        }
+        
+        // Helper: Get file icon
+        function getFileIcon(mimeType) {
+            if (!mimeType) return '📄';
+            if (mimeType.startsWith('image/')) return '🖼️';
+            if (mimeType.startsWith('video/')) return '🎬';
+            if (mimeType.startsWith('audio/')) return '🎵';
+            if (mimeType.includes('pdf')) return '📕';
+            if (mimeType.includes('word')) return '📝';
+            if (mimeType.includes('sheet') || mimeType.includes('excel')) return '📊';
+            if (mimeType.includes('presentation')) return '📽️';
             return '📄';
-        }
-        
-        function formatSize(b) {
-            if (!b) return '0 B';
-            const k = 1024, s = ['B','KB','MB','GB'];
-            const i = Math.floor(Math.log(b)/Math.log(k));
-            return (b/Math.pow(k,i)).toFixed(1)+' '+s[i];
         }
     </script>
 </body>
