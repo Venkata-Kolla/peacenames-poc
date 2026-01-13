@@ -33,65 +33,76 @@
         
         /* 5x5 Grid */
         .cgrid-container { display: flex; justify-content: center; padding: 1rem 0; }
-        .cgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; max-width: 500px; width: 100%; }
+        .cgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 550px; width: 100%; }
         .cgrid-cell { 
             aspect-ratio: 1; 
-            border-radius: 8px; 
+            border-radius: 6px; 
             cursor: pointer; 
             transition: all 0.2s;
             overflow: hidden;
             position: relative;
-            border: 2px solid transparent;
+            border: 3px solid transparent;
         }
         .cgrid-cell:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transform: scale(1.08); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
             z-index: 10;
         }
         .cgrid-cell.selected {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.3);
+            border-color: #333;
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.4);
         }
-        .cgrid-cell img { width: 100%; height: 100%; object-fit: cover; }
+        .cgrid-cell img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
         .cgrid-cell .label {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.75);
             color: white;
-            font-size: 0.65rem;
-            padding: 2px 4px;
+            font-size: 0.6rem;
+            padding: 3px 4px;
             text-align: center;
             opacity: 0;
             transition: opacity 0.2s;
+            font-weight: 600;
         }
         .cgrid-cell:hover .label { opacity: 1; }
+        
+        /* Column background colors - matching Liana's original cgrid.jpg */
+        /* Col 1: Gray/Tan (WHERE), Col 2: Yellow (WHEN), Col 3: Green (WHAT), Col 4: Blue (HOW), Col 5: Pink (WHO) */
+        .cgrid-cell.col-1 { background: #d4d0c8; }
+        .cgrid-cell.col-2 { background: #f5e6a3; }
+        .cgrid-cell.col-3 { background: #98d4a4; }
+        .cgrid-cell.col-4 { background: #a8c8e8; }
+        .cgrid-cell.col-5 { background: #e8c8d0; }
+        
         .cgrid-cell.center-cell {
-            background: linear-gradient(135deg, #a8e6cf, #88d8b0);
+            background: #98d4a4;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         .cgrid-cell.center-cell img {
-            width: 80%;
-            height: 80%;
+            width: 90%;
+            height: 90%;
             object-fit: contain;
         }
         
-        /* Dimension Labels */
-        .dimension-labels { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; flex-wrap: wrap; }
+        /* Dimension Labels - matching column colors */
+        .dimension-labels { display: flex; justify-content: center; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
         .dim-label { 
-            padding: 0.5rem 1rem; 
-            border-radius: 20px; 
-            font-size: 0.75rem; 
+            padding: 0.4rem 0.8rem; 
+            border-radius: 6px; 
+            font-size: 0.7rem; 
             font-weight: 600;
+            border: 2px solid rgba(0,0,0,0.2);
         }
-        .dim-label.where { background: #FFF3E0; color: #E65100; }
-        .dim-label.when { background: #E3F2FD; color: #1565C0; }
-        .dim-label.what { background: #E8F5E9; color: #2E7D32; }
-        .dim-label.how { background: #FCE4EC; color: #C2185B; }
-        .dim-label.who { background: #F3E5F5; color: #7B1FA2; }
+        .dim-label.where { background: #d4d0c8; color: #333; }
+        .dim-label.when { background: #f5e6a3; color: #665500; }
+        .dim-label.what { background: #98d4a4; color: #1a5c2a; }
+        .dim-label.how { background: #a8c8e8; color: #1a4a6e; }
+        .dim-label.who { background: #e8c8d0; color: #6e1a3a; }
         
         /* Selected Tags Display */
         .selected-section { background: var(--card); border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -324,9 +335,10 @@
             CGRID_CONFIG.forEach((cell, index) => {
                 const isSelected = state.selectedCells.includes(cell.id);
                 const label = state.lang === 'zh' ? cell.zh : cell.en;
+                const colNum = (index % 5) + 1; // Column 1-5
                 
                 html += `
-                    <div class="cgrid-cell ${isSelected ? 'selected' : ''} ${cell.isCenter ? 'center-cell' : ''}" 
+                    <div class="cgrid-cell col-${colNum} ${isSelected ? 'selected' : ''} ${cell.isCenter ? 'center-cell' : ''}" 
                          onclick="toggleCell('${cell.id}')"
                          title="${cell.en} / ${cell.zh}">
                         <img src="${cell.icon}" alt="${cell.en}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23ddd%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 dy=%22.3em%22 font-size=%2220%22>${cell.en.charAt(0)}</text></svg>'">
