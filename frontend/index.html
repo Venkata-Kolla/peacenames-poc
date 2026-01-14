@@ -265,39 +265,43 @@
     <script>
         const API = '/api';
         
-        // 5x5 C-Grid configuration - EXACT match to cgrid.jpg positions
-        // Colors are baked into icon images, showing data collection direction
+        // 5x5 C-Grid configuration - EXACT visual match to cgrid.jpg
+        // Icon files mapped by their VISUAL content, not filename meaning
         const CGRID_CONFIG = [
-            // Row 1: gold, edu(whiteboard), res(fruit), pub(news), biz(piggy)
-            { id: 'gold', en: 'Finance', zh: '金', icon: 'icons/gold.jpg', dimension: 'WHERE' },
-            { id: 'edu', en: 'Education', zh: '学', icon: 'icons/edu.jpg', dimension: 'WHEN' },
-            { id: 'res', en: 'Resources', zh: '农', icon: 'icons/res.jpg', dimension: 'WHAT' },
-            { id: 'pub', en: 'Publication', zh: '版', icon: 'icons/pub.jpg', dimension: 'HOW' },
-            { id: 'biz', en: 'Business', zh: '计', icon: 'icons/biz.jpg', dimension: 'WHO' },
-            // Row 2: arch(pyramid), mot(clock), dir(clipboard), edu(books), com(bottles)
-            { id: 'arch', en: 'Archive', zh: '拱', icon: 'icons/arch.jpg', dimension: 'WHERE' },
-            { id: 'mot', en: 'Mode/Time', zh: '式', icon: 'icons/mot.jpg', dimension: 'WHEN' },
-            { id: 'dir', en: 'Directory', zh: '档', icon: 'icons/dir.jpg', dimension: 'WHAT' },
-            { id: 'job', en: 'Job', zh: '职', icon: 'icons/job.jpg', dimension: 'HOW' },
-            { id: 'com', en: 'Commerce', zh: '商', icon: 'icons/com.jpg', dimension: 'WHO' },
-            // Row 3: lan(ancient text), exp(boat), name(center), post(mail), sys(arrows)
-            { id: 'lan', en: 'Language', zh: '文', icon: 'icons/lan.jpg', dimension: 'WHERE' },
-            { id: 'exp', en: 'Experience', zh: '示', icon: 'icons/exp.jpg', dimension: 'WHEN' },
-            { id: 'name', en: 'Name', zh: '名', icon: 'icons/name.jpg', dimension: 'WHAT', isCenter: true },
-            { id: 'post', en: 'Post/Mail', zh: '邮', icon: 'icons/post.jpg', dimension: 'HOW' },
-            { id: 'sys', en: 'System', zh: '系', icon: 'icons/sys.jpg', dimension: 'WHO' },
-            // Row 4: loc(globe), info(phone), tree, net(water/pool), gov(buildings)
-            { id: 'loc', en: 'Location', zh: '址', icon: 'icons/loc.jpg', dimension: 'WHERE' },
-            { id: 'info', en: 'Info', zh: '息', icon: 'icons/info.jpg', dimension: 'WHEN' },
-            { id: 'tree', en: 'Tree/Family', zh: '树', icon: 'icons/tree.jpg', dimension: 'WHAT' },
-            { id: 'net', en: 'Network', zh: '网', icon: 'icons/net.jpg', dimension: 'HOW' },
-            { id: 'gov', en: 'Government', zh: '政', icon: 'icons/gov.jpg', dimension: 'WHO' },
-            // Row 5: neon(moon), dic(folder), proj(astronaut), org(people), cir(sun)
-            { id: 'neon', en: 'Neon/New', zh: '霓', icon: 'icons/neon.jpg', dimension: 'WHERE' },
-            { id: 'dic', en: 'Dictionary', zh: '典', icon: 'icons/dic.jpg', dimension: 'WHEN' },
-            { id: 'proj', en: 'Project', zh: '项', icon: 'icons/proj.jpg', dimension: 'WHAT' },
-            { id: 'org', en: 'Organization', zh: '团', icon: 'icons/org.jpg', dimension: 'HOW' },
-            { id: 'cir', en: 'Circle', zh: '群', icon: 'icons/cir.jpg', dimension: 'WHO' },
+            // Row 1: coins(gold), whiteboard(mot), fruit(res), newspaper(pub), piggybank(biz)
+            { id: 'r1c1', en: 'Finance', zh: '金', icon: 'icons/gold.jpg' },
+            { id: 'r1c2', en: 'Mode', zh: '式', icon: 'icons/mot.jpg' },
+            { id: 'r1c3', en: 'Resources', zh: '农', icon: 'icons/res.jpg' },
+            { id: 'r1c4', en: 'Publication', zh: '版', icon: 'icons/pub.jpg' },
+            { id: 'r1c5', en: 'Business', zh: '计', icon: 'icons/biz.jpg' },
+            
+            // Row 2: pyramid(arch), clock(sys), clipboard(proj), books(edu), bottles(com)
+            { id: 'r2c1', en: 'Archive', zh: '拱', icon: 'icons/arch.jpg' },
+            { id: 'r2c2', en: 'System', zh: '系', icon: 'icons/sys.jpg' },
+            { id: 'r2c3', en: 'Project', zh: '项', icon: 'icons/proj.jpg' },
+            { id: 'r2c4', en: 'Education', zh: '学', icon: 'icons/edu.jpg' },
+            { id: 'r2c5', en: 'Commerce', zh: '商', icon: 'icons/com.jpg' },
+            
+            // Row 3: ancient-text(lan), boat(net), center-dove(name), mail(post), arrows(dir)
+            { id: 'r3c1', en: 'Language', zh: '文', icon: 'icons/lan.jpg' },
+            { id: 'r3c2', en: 'Network', zh: '网', icon: 'icons/net.jpg' },
+            { id: 'r3c3', en: 'Name', zh: '名', icon: 'icons/name.jpg', isCenter: true },
+            { id: 'r3c4', en: 'Post', zh: '邮', icon: 'icons/post.jpg' },
+            { id: 'r3c5', en: 'Direction', zh: '档', icon: 'icons/dir.jpg' },
+            
+            // Row 4: globe(loc), phone(exp), tree(tree), boat-water(net?), buildings(gov)
+            { id: 'r4c1', en: 'Location', zh: '址', icon: 'icons/loc.jpg' },
+            { id: 'r4c2', en: 'Experience', zh: '示', icon: 'icons/exp.jpg' },
+            { id: 'r4c3', en: 'Tree', zh: '树', icon: 'icons/tree.jpg' },
+            { id: 'r4c4', en: 'Info', zh: '息', icon: 'icons/info.jpg' },
+            { id: 'r4c5', en: 'Government', zh: '政', icon: 'icons/gov.jpg' },
+            
+            // Row 5: stars(neon), folder(dic), astronaut(job), people(org), water(cir)
+            { id: 'r5c1', en: 'Neon', zh: '霓', icon: 'icons/neon.jpg' },
+            { id: 'r5c2', en: 'Dictionary', zh: '典', icon: 'icons/dic.jpg' },
+            { id: 'r5c3', en: 'Job', zh: '职', icon: 'icons/job.jpg' },
+            { id: 'r5c4', en: 'Organization', zh: '团', icon: 'icons/org.jpg' },
+            { id: 'r5c5', en: 'Circle', zh: '群', icon: 'icons/cir.jpg' },
         ];
         
         let state = {
