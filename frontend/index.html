@@ -31,17 +31,18 @@
         .cgrid-header h2 { font-size: 1.25rem; color: var(--primary-dark); }
         .cgrid-subtitle { color: var(--text-sec); font-size: 0.875rem; }
         
-        /* 5x5 Grid */
+        /* 5x5 Grid - Icons have background colors baked in */
         .cgrid-container { display: flex; justify-content: center; padding: 1rem 0; }
-        .cgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; max-width: 550px; width: 100%; }
+        .cgrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; max-width: 550px; width: 100%; }
         .cgrid-cell { 
             aspect-ratio: 1; 
-            border-radius: 6px; 
+            border-radius: 4px; 
             cursor: pointer; 
             transition: all 0.2s;
             overflow: hidden;
             position: relative;
-            border: 3px solid transparent;
+            border: 2px solid transparent;
+            background: #f0f0f0;
         }
         .cgrid-cell:hover { 
             transform: scale(1.08); 
@@ -52,7 +53,7 @@
             border-color: #333;
             box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.4);
         }
-        .cgrid-cell img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; }
+        .cgrid-cell img { width: 100%; height: 100%; object-fit: cover; }
         .cgrid-cell .label {
             position: absolute;
             bottom: 0;
@@ -69,24 +70,8 @@
         }
         .cgrid-cell:hover .label { opacity: 1; }
         
-        /* Column background colors - matching Liana's original cgrid.jpg */
-        /* Col 1: Gray/Tan (WHERE), Col 2: Yellow (WHEN), Col 3: Green (WHAT), Col 4: Blue (HOW), Col 5: Pink (WHO) */
-        .cgrid-cell.col-1 { background: #d4d0c8; }
-        .cgrid-cell.col-2 { background: #f5e6a3; }
-        .cgrid-cell.col-3 { background: #98d4a4; }
-        .cgrid-cell.col-4 { background: #a8c8e8; }
-        .cgrid-cell.col-5 { background: #e8c8d0; }
-        
         .cgrid-cell.center-cell {
-            background: #98d4a4;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .cgrid-cell.center-cell img {
-            width: 90%;
-            height: 90%;
-            object-fit: contain;
+            border: 3px solid #2E7D32;
         }
         
         /* Dimension Labels - matching column colors */
@@ -280,38 +265,39 @@
     <script>
         const API = '/api';
         
-        // 5x5 C-Grid configuration based on cgrid.jpg
+        // 5x5 C-Grid configuration - EXACT match to cgrid.jpg positions
+        // Colors are baked into icon images, showing data collection direction
         const CGRID_CONFIG = [
-            // Row 1
-            { id: 'gold', en: 'Finance', zh: '金融', icon: 'icons/gold.jpg', dimension: 'WHAT' },
-            { id: 'edu', en: 'Education', zh: '教育', icon: 'icons/edu.jpg', dimension: 'WHEN' },
-            { id: 'res', en: 'Resources', zh: '资源', icon: 'icons/res.jpg', dimension: 'WHAT' },
-            { id: 'pub', en: 'Publication', zh: '出版', icon: 'icons/pub.jpg', dimension: 'HOW' },
-            { id: 'biz', en: 'Business', zh: '商业', icon: 'icons/biz.jpg', dimension: 'WHO' },
-            // Row 2
-            { id: 'arch', en: 'Archive', zh: '档案', icon: 'icons/arch.jpg', dimension: 'WHERE' },
-            { id: 'mot', en: 'Time', zh: '时间', icon: 'icons/mot.jpg', dimension: 'WHEN' },
-            { id: 'dir', en: 'Documents', zh: '文档', icon: 'icons/dir.jpg', dimension: 'WHAT' },
-            { id: 'job', en: 'Career', zh: '职业', icon: 'icons/job.jpg', dimension: 'HOW' },
-            { id: 'com', en: 'Commerce', zh: '贸易', icon: 'icons/com.jpg', dimension: 'WHO' },
-            // Row 3
-            { id: 'lan', en: 'Language', zh: '语言', icon: 'icons/lan.jpg', dimension: 'WHERE' },
-            { id: 'exp', en: 'Experience', zh: '经历', icon: 'icons/exp.jpg', dimension: 'WHEN' },
-            { id: 'name', en: 'Identity', zh: '身份', icon: 'icons/name.jpg', dimension: 'WHAT', isCenter: true },
-            { id: 'post', en: 'Mail', zh: '邮件', icon: 'icons/post.jpg', dimension: 'HOW' },
-            { id: 'sys', en: 'System', zh: '系统', icon: 'icons/sys.jpg', dimension: 'WHO' },
-            // Row 4
-            { id: 'loc', en: 'Location', zh: '位置', icon: 'icons/loc.jpg', dimension: 'WHERE' },
-            { id: 'info', en: 'Info', zh: '信息', icon: 'icons/info.jpg', dimension: 'WHEN' },
-            { id: 'tree', en: 'Family', zh: '家庭', icon: 'icons/tree.jpg', dimension: 'WHAT' },
-            { id: 'net', en: 'Network', zh: '网络', icon: 'icons/net.jpg', dimension: 'HOW' },
-            { id: 'gov', en: 'Government', zh: '政府', icon: 'icons/gov.jpg', dimension: 'WHO' },
-            // Row 5
-            { id: 'neon', en: 'New', zh: '新建', icon: 'icons/neon.jpg', dimension: 'WHERE' },
-            { id: 'dic', en: 'Dictionary', zh: '词典', icon: 'icons/dic.jpg', dimension: 'WHEN' },
-            { id: 'proj', en: 'Project', zh: '项目', icon: 'icons/proj.jpg', dimension: 'WHAT' },
-            { id: 'org', en: 'Organization', zh: '组织', icon: 'icons/org.jpg', dimension: 'HOW' },
-            { id: 'cir', en: 'Circle', zh: '圈子', icon: 'icons/cir.jpg', dimension: 'WHO' },
+            // Row 1: gold, edu(whiteboard), res(fruit), pub(news), biz(piggy)
+            { id: 'gold', en: 'Finance', zh: '金', icon: 'icons/gold.jpg', dimension: 'WHERE' },
+            { id: 'edu', en: 'Education', zh: '学', icon: 'icons/edu.jpg', dimension: 'WHEN' },
+            { id: 'res', en: 'Resources', zh: '农', icon: 'icons/res.jpg', dimension: 'WHAT' },
+            { id: 'pub', en: 'Publication', zh: '版', icon: 'icons/pub.jpg', dimension: 'HOW' },
+            { id: 'biz', en: 'Business', zh: '计', icon: 'icons/biz.jpg', dimension: 'WHO' },
+            // Row 2: arch(pyramid), mot(clock), dir(clipboard), edu(books), com(bottles)
+            { id: 'arch', en: 'Archive', zh: '拱', icon: 'icons/arch.jpg', dimension: 'WHERE' },
+            { id: 'mot', en: 'Mode/Time', zh: '式', icon: 'icons/mot.jpg', dimension: 'WHEN' },
+            { id: 'dir', en: 'Directory', zh: '档', icon: 'icons/dir.jpg', dimension: 'WHAT' },
+            { id: 'job', en: 'Job', zh: '职', icon: 'icons/job.jpg', dimension: 'HOW' },
+            { id: 'com', en: 'Commerce', zh: '商', icon: 'icons/com.jpg', dimension: 'WHO' },
+            // Row 3: lan(ancient text), exp(boat), name(center), post(mail), sys(arrows)
+            { id: 'lan', en: 'Language', zh: '文', icon: 'icons/lan.jpg', dimension: 'WHERE' },
+            { id: 'exp', en: 'Experience', zh: '示', icon: 'icons/exp.jpg', dimension: 'WHEN' },
+            { id: 'name', en: 'Name', zh: '名', icon: 'icons/name.jpg', dimension: 'WHAT', isCenter: true },
+            { id: 'post', en: 'Post/Mail', zh: '邮', icon: 'icons/post.jpg', dimension: 'HOW' },
+            { id: 'sys', en: 'System', zh: '系', icon: 'icons/sys.jpg', dimension: 'WHO' },
+            // Row 4: loc(globe), info(phone), tree, net(water/pool), gov(buildings)
+            { id: 'loc', en: 'Location', zh: '址', icon: 'icons/loc.jpg', dimension: 'WHERE' },
+            { id: 'info', en: 'Info', zh: '息', icon: 'icons/info.jpg', dimension: 'WHEN' },
+            { id: 'tree', en: 'Tree/Family', zh: '树', icon: 'icons/tree.jpg', dimension: 'WHAT' },
+            { id: 'net', en: 'Network', zh: '网', icon: 'icons/net.jpg', dimension: 'HOW' },
+            { id: 'gov', en: 'Government', zh: '政', icon: 'icons/gov.jpg', dimension: 'WHO' },
+            // Row 5: neon(moon), dic(folder), proj(astronaut), org(people), cir(sun)
+            { id: 'neon', en: 'Neon/New', zh: '霓', icon: 'icons/neon.jpg', dimension: 'WHERE' },
+            { id: 'dic', en: 'Dictionary', zh: '典', icon: 'icons/dic.jpg', dimension: 'WHEN' },
+            { id: 'proj', en: 'Project', zh: '项', icon: 'icons/proj.jpg', dimension: 'WHAT' },
+            { id: 'org', en: 'Organization', zh: '团', icon: 'icons/org.jpg', dimension: 'HOW' },
+            { id: 'cir', en: 'Circle', zh: '群', icon: 'icons/cir.jpg', dimension: 'WHO' },
         ];
         
         let state = {
