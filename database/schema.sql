@@ -368,6 +368,46 @@ INSERT INTO tags (dimension_id, name_en, name_zh, parent_id, level, display_orde
 (5, 'Holiday', '节日', 45, 2, 4);
 
 -- ============================================================================
+-- SEED DATA: C-Grid Icon Tags
+-- ============================================================================
+-- These tags match the 25 C-Grid visual icons exactly.
+-- This ensures that when user clicks "Info", files get tagged with "Info".
+-- ============================================================================
+
+-- C-Grid tags (dimension_id = 3 for WHAT, as most are content types)
+INSERT INTO tags (dimension_id, name_en, name_zh, parent_id, level, display_order) VALUES
+-- Row 1 icons
+(3, 'Finance', '金融', NULL, 1, 101),
+(3, 'Mode', '模式', NULL, 1, 102),
+(3, 'Resources', '资源', NULL, 1, 103),
+(3, 'Publication', '出版', NULL, 1, 104),
+(3, 'Business', '商业', NULL, 1, 105),
+-- Row 2 icons
+(3, 'Archive', '档案', NULL, 1, 106),
+(3, 'System', '系统', NULL, 1, 107),
+-- Project already exists
+(3, 'Education', '教育', NULL, 1, 108),
+(3, 'Commerce', '商务', NULL, 1, 109),
+-- Row 3 icons
+(3, 'Language', '语言', NULL, 1, 110),
+(3, 'Network', '网络', NULL, 1, 111),
+-- Name is center, skip
+(3, 'Post', '邮件', NULL, 1, 112),
+(3, 'Direction', '方向', NULL, 1, 113),
+-- Row 4 icons
+(3, 'Location', '位置', NULL, 1, 114),
+(3, 'Experience', '经历', NULL, 1, 115),
+(3, 'Tree', '树', NULL, 1, 116),
+(3, 'Circle', '圈子', NULL, 1, 117),
+(3, 'Government', '政府', NULL, 1, 118),
+-- Row 5 icons
+(3, 'Neon', '霓虹', NULL, 1, 119),
+(3, 'Dictionary', '字典', NULL, 1, 120),
+(3, 'Job', '工作', NULL, 1, 121),
+(3, 'Organization', '组织', NULL, 1, 122),
+(3, 'Info', '信息', NULL, 1, 123);
+
+-- ============================================================================
 -- SEED DATA: Sample User
 -- ============================================================================
 INSERT INTO users (name_en, name_zh, email) VALUES

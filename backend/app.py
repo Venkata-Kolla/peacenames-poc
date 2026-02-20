@@ -203,6 +203,41 @@ def get_tags_tree():
         app.logger.error(f"Error fetching tag tree: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
+# C-Grid cell ID to database tag name mapping
+# Uses EXACT icon names so hover text matches file tags
+CGRID_TO_TAGS = {
+    # Row 1
+    'r1c1': ['Finance'],            # Gold/Finance
+    'r1c2': ['Mode'],               # Mode (1+1=0)
+    'r1c3': ['Resources'],          # Resources
+    'r1c4': ['Publication'],        # Publication
+    'r1c5': ['Business'],           # Business
+    # Row 2  
+    'r2c1': ['Archive'],            # Archive (pyramid)
+    'r2c2': ['System'],             # System (clock)
+    'r2c3': ['Project'],            # Project (clipboard)
+    'r2c4': ['Education'],          # Education (books)
+    'r2c5': ['Commerce'],           # Commerce (bottles)
+    # Row 3
+    'r3c1': ['Language'],           # Language (ancient text)
+    'r3c2': ['Network'],            # Network (boat)
+    'r3c3': [],                     # Center/Name - shows all
+    'r3c4': ['Post'],               # Post (mail)
+    'r3c5': ['Direction'],          # Direction (arrows)
+    # Row 4
+    'r4c1': ['Location'],           # Location (globe)
+    'r4c2': ['Experience'],         # Experience (phone)
+    'r4c3': ['Tree'],               # Tree (family tree)
+    'r4c4': ['Circle'],             # Circle (water/social)
+    'r4c5': ['Government'],         # Government (buildings)
+    # Row 5
+    'r5c1': ['Neon'],               # Neon (stars)
+    'r5c2': ['Dictionary'],         # Dictionary (folder)
+    'r5c3': ['Job'],                # Job (astronaut)
+    'r5c4': ['Organization'],       # Organization (people)
+    'r5c5': ['Info'],               # Info (sun)
+}
+
 @app.route('/api/files', methods=['GET'])
 def get_files():
     try:
@@ -212,13 +247,57 @@ def get_files():
         offset = request.args.get('offset', 0, type=int)
         
         tag_ids = []
+        cgrid_cells = []
+        user_selected_filter = False  # Track if user selected any filter
+        
         if tag_ids_str:
-            tag_ids = [int(t.strip()) for t in tag_ids_str.split(',') if t.strip()]
+            user_selected_filter = True  # User did select something
+            for t in tag_ids_str.split(','):
+                t = t.strip()
+                if t:
+                    try:
+                        # Try parsing as numeric ID first
+                        tag_ids.append(int(t))
+                    except ValueError:
+                        # It's a C-Grid cell ID like 'r2c4'
+                        cgrid_cells.append(t)
+        
+        # Convert C-Grid cells to tag names, then to tag IDs
+        if cgrid_cells:
+            tag_names = []
+            for cell in cgrid_cells:
+                if cell in CGRID_TO_TAGS:
+                    tag_names.extend(CGRID_TO_TAGS[cell])
+            
+            if tag_names:
+                # Remove duplicates
+                tag_names = list(set(tag_names))
+                placeholders = ','.join(['%s'] * len(tag_names))
+                name_query = f"""
+                    SELECT id FROM tags 
+                    WHERE name_en IN ({placeholders}) AND is_active = TRUE
+                """
+                tag_results = execute_query(name_query, tuple(tag_names))
+                tag_ids.extend([r['id'] for r in tag_results])
+        
+        # Remove duplicate tag IDs
+        tag_ids = list(set(tag_ids))
+        
+        # If user selected filters but no matching tags found, return empty
+        if user_selected_filter and not tag_ids:
+            return jsonify({
+                'success': True,
+                'data': [],
+                'count': 0,
+                'filters': {'tag_ids': [], 'user_id': user_id},
+                'message': 'No matching tags found for selected categories'
+            })
         
         if tag_ids:
+            # Use OR logic: show files with ANY of the selected tags
             placeholders = ','.join(['%s'] * len(tag_ids))
             query = f"""
-                SELECT 
+                SELECT DISTINCT
                     f.id, f.original_filename, f.mime_type, f.size_bytes,
                     f.description, f.created_at, f.storage_path,
                     u.name_en as owner_name_en, u.name_zh as owner_name_zh
@@ -226,12 +305,10 @@ def get_files():
                 JOIN users u ON f.user_id = u.id
                 JOIN file_tags ft ON f.id = ft.file_id
                 WHERE f.user_id = %s AND ft.tag_id IN ({placeholders})
-                GROUP BY f.id
-                HAVING COUNT(DISTINCT ft.tag_id) = %s
                 ORDER BY f.created_at DESC
                 LIMIT %s OFFSET %s
             """
-            params = [user_id] + tag_ids + [len(tag_ids), limit, offset]
+            params = [user_id] + tag_ids + [limit, offset]
         else:
             query = """
                 SELECT 
@@ -364,11 +441,40 @@ def upload_file():
 def assign_tags(file_id):
     try:
         data = request.get_json()
-        if not data or 'tag_ids' not in data:
-            return jsonify({'success': False, 'error': 'tag_ids required'}), 400
+        if not data:
+            return jsonify({'success': False, 'error': 'Request body required'}), 400
         
-        tag_ids = data['tag_ids']
         user_id = data.get('user_id', 1)
+        
+        # Accept either tag_ids (numeric) or cgrid_cells (cell IDs)
+        tag_ids = data.get('tag_ids', [])
+        cgrid_cells = data.get('cgrid_cells', [])
+        
+        # Convert C-Grid cells to tag IDs
+        if cgrid_cells:
+            tag_names = []
+            for cell in cgrid_cells:
+                if cell in CGRID_TO_TAGS and CGRID_TO_TAGS[cell]:
+                    tag_names.extend(CGRID_TO_TAGS[cell])
+            
+            if tag_names:
+                tag_names = list(set(tag_names))
+                placeholders = ','.join(['%s'] * len(tag_names))
+                tag_results = execute_query(
+                    f"SELECT id FROM tags WHERE name_en IN ({placeholders}) AND is_active = TRUE",
+                    tuple(tag_names)
+                )
+                tag_ids.extend([r['id'] for r in tag_results])
+        
+        if not tag_ids:
+            # No valid tags to assign, but that's okay
+            return jsonify({
+                'success': True,
+                'data': {'file_id': file_id, 'tags': [], 'message': 'No matching tags found'}
+            })
+        
+        # Remove duplicates
+        tag_ids = list(set(tag_ids))
         
         file = execute_query(
             "SELECT id FROM files WHERE id = %s",

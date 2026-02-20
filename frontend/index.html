@@ -410,8 +410,11 @@
         async function loadFiles() {
             const grid = document.getElementById('files-grid');
             
+            // Show loading state
+            grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⏳</div><p>Loading...</p></div>';
+            
             try {
-                // Map selected cells to tag IDs (for now, use simple mapping)
+                // Send selected cell IDs to API
                 const tagParams = state.selectedCells.length > 0 
                     ? `?tags=${state.selectedCells.join(',')}` 
                     : '';
@@ -424,26 +427,28 @@
                     document.getElementById('file-count').textContent = state.files.length;
                     renderFiles();
                 } else {
-                    grid.innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Error loading files</p></div>';
+                    console.error('API error:', data.error);
+                    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">⚠️</div><p>Error: ${data.error || 'Unknown error'}</p></div>`;
                 }
             } catch (error) {
                 console.error('Error loading files:', error);
                 // Show demo files if API not available
+                console.log('Falling back to demo files');
                 state.files = getDemoFiles();
                 document.getElementById('file-count').textContent = state.files.length;
                 renderFiles();
             }
         }
         
-        // Demo files for offline testing
+        // Demo files for offline testing (using C-Grid cell IDs)
         function getDemoFiles() {
             return [
-                { id: 1, original_filename: 'family_photo.jpg', mime_type: 'image/jpeg', description: 'Family vacation in Paris', tags: ['tree', 'loc', 'exp'] },
-                { id: 2, original_filename: 'quarterly_report.pdf', mime_type: 'application/pdf', description: 'Q3 2024 business report', tags: ['biz', 'dir', 'proj'] },
-                { id: 3, original_filename: 'school_certificate.pdf', mime_type: 'application/pdf', description: 'Education certificate', tags: ['edu', 'dir'] },
-                { id: 4, original_filename: 'invoice_2024.pdf', mime_type: 'application/pdf', description: 'Business invoice', tags: ['gold', 'biz', 'dir'] },
-                { id: 5, original_filename: 'travel_memories.jpg', mime_type: 'image/jpeg', description: 'Travel photos', tags: ['loc', 'exp'] },
-                { id: 6, original_filename: 'contact_list.xlsx', mime_type: 'application/excel', description: 'Network contacts', tags: ['net', 'org', 'info'] },
+                { id: 1, original_filename: 'family_photo.jpg', mime_type: 'image/jpeg', description: 'Family vacation in Paris', tags: ['r4c3', 'r4c1', 'r4c2'] },
+                { id: 2, original_filename: 'quarterly_report.pdf', mime_type: 'application/pdf', description: 'Q3 2024 business report', tags: ['r1c5', 'r3c5', 'r2c3'] },
+                { id: 3, original_filename: 'school_certificate.pdf', mime_type: 'application/pdf', description: 'Education certificate', tags: ['r2c4', 'r3c5'] },
+                { id: 4, original_filename: 'invoice_2024.pdf', mime_type: 'application/pdf', description: 'Business invoice', tags: ['r1c1', 'r1c5', 'r3c5'] },
+                { id: 5, original_filename: 'travel_memories.jpg', mime_type: 'image/jpeg', description: 'Travel photos', tags: ['r4c1', 'r4c2'] },
+                { id: 6, original_filename: 'contact_list.xlsx', mime_type: 'application/excel', description: 'Network contacts', tags: ['r3c2', 'r5c4', 'r5c5'] },
             ];
         }
         
@@ -451,14 +456,8 @@
         function renderFiles() {
             const grid = document.getElementById('files-grid');
             
-            // Filter files based on selected cells
+            // Files are already filtered by API, no need for local filtering
             let filteredFiles = state.files;
-            if (state.selectedCells.length > 0) {
-                filteredFiles = state.files.filter(file => {
-                    const fileTags = file.tags || [];
-                    return state.selectedCells.some(cell => fileTags.includes(cell));
-                });
-            }
             
             if (filteredFiles.length === 0) {
                 grid.innerHTML = `
@@ -477,18 +476,31 @@
             let html = '';
             filteredFiles.forEach(file => {
                 const icon = getFileIcon(file.mime_type);
+                
+                // Handle both API format (objects) and demo format (strings)
+                let tagsHtml = '';
+                if (file.tags && file.tags.length > 0) {
+                    const displayTags = file.tags.slice(0, 4).map(tag => {
+                        if (typeof tag === 'string') {
+                            // Demo format: cell ID like 'r2c4'
+                            const cell = CGRID_CONFIG.find(c => c.id === tag);
+                            return cell ? (state.lang === 'zh' ? cell.zh : cell.en) : tag;
+                        } else if (typeof tag === 'object' && tag !== null) {
+                            // API format: {id, name_en, name_zh, dimension_code}
+                            return state.lang === 'zh' ? (tag.name_zh || tag.name_en) : tag.name_en;
+                        }
+                        return '';
+                    }).filter(t => t);
+                    tagsHtml = displayTags.map(t => `<span class="file-tag">${t}</span>`).join('');
+                }
+                
                 html += `
                     <div class="file-card">
                         <div class="file-preview">${icon}</div>
                         <div class="file-info">
                             <div class="file-name" title="${file.original_filename}">${file.original_filename}</div>
                             ${file.description ? `<div style="font-size:0.7rem;color:var(--text-sec);margin-bottom:0.25rem;">${file.description}</div>` : ''}
-                            <div class="file-tags">
-                                ${(file.tags || []).slice(0, 4).map(tagId => {
-                                    const cell = CGRID_CONFIG.find(c => c.id === tagId);
-                                    return cell ? `<span class="file-tag">${state.lang === 'zh' ? cell.zh : cell.en}</span>` : '';
-                                }).join('')}
-                            </div>
+                            <div class="file-tags">${tagsHtml}</div>
                         </div>
                     </div>
                 `;
@@ -538,19 +550,50 @@
                 }
             }
             
-            // Add to demo files (in real app, would upload to server)
-            const newFile = {
-                id: state.files.length + 1,
-                original_filename: fileInput.files[0].name,
-                mime_type: fileInput.files[0].type,
-                description: desc,
-                tags: uploadSelectedCells
-            };
-            
-            state.files.push(newFile);
-            closeModal();
-            renderFiles();
-            alert(state.lang === 'zh' ? '上传成功！' : 'Upload successful!');
+            try {
+                // Step 1: Upload file to server
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('description', desc);
+                formData.append('user_id', '1');
+                
+                const uploadResponse = await fetch(`${API}/files`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const uploadData = await uploadResponse.json();
+                
+                if (!uploadData.success) {
+                    alert('Upload failed: ' + (uploadData.error || 'Unknown error'));
+                    return;
+                }
+                
+                const fileId = uploadData.data.id;
+                
+                // Step 2: Assign tags if any selected
+                if (uploadSelectedCells.length > 0) {
+                    const tagResponse = await fetch(`${API}/files/${fileId}/tags`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            cgrid_cells: uploadSelectedCells,  // Send C-Grid cell IDs
+                            user_id: 1
+                        })
+                    });
+                    const tagData = await tagResponse.json();
+                    if (!tagData.success) {
+                        console.warn('Tag assignment failed:', tagData.error);
+                    }
+                }
+                
+                closeModal();
+                loadFiles();  // Reload from server
+                alert(state.lang === 'zh' ? '上传成功！' : 'Upload successful!');
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Upload failed: ' + error.message);
+            }
         }
         
         // Language toggle
